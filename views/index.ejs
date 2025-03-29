@@ -11,10 +11,11 @@
         <form action="/delete" method="post">
           <input type="checkbox" onchange="this.form.submit()" name="deleteItemId" value="<%= item.id %>">
         </form>
-
-        <p id="title<%=item.id%>">
+ 
+        <p id="title<%=item.id%>"> <strong>Target:</strong>
           <%= item.title %>
         </p>
+        
 
         <form class="edit" action="/edit" method="post">
           <input type="hidden" name="updatedItemId" value="<%= item.id %>">
@@ -26,11 +27,38 @@
         </form>
         <button id="edit<%=item.id%>" class="edit" onclick="handler('<%=item.id%>')"><img class="icon"
             src="/assets/icons/pencil-solid.svg" alt="pencil image"></button>
-      </div>
+      
+      
+      
+      <p><strong>Due Date:</strong> <%= item.due_date ? new Date(item.due_date).toLocaleDateString('en-GB') : 'No due date' %></p>
+
+      <% if (item.due_date && new Date(item.due_date) <= new Date()) { %>
+        <p style="color: red; font-weight: bold;">🚨 Due Today or Overdue!</p>
+      <% } %>
+      
+      <p><strong>Priority:</strong> <%= item.priority %></p>
+      <p><strong>Status:</strong> <%= item.status %></p>
+
+      <form action="/update-status" method="post">
+        <input type="hidden" name="id" value="<%= item.id %>">
+        <select name="status" onchange="this.form.submit()">
+          <option value="Pending" <%= item.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+          <option value="In Progress" <%= item.status === 'In Progress' ? 'selected' : '' %>>In Progress</option>
+          <option value="Completed" <%= item.status === 'Completed' ? 'selected' : '' %>>Completed</option>
+        </select>
+      </form>
+    </div>
+
       <% } %>
 
         <form class="item" action="/add" method="post">
-          <input type="text" name="newItem" placeholder="Add New Task" autocomplete="off" autofocus="true" />
+          <input type="text" name="newItem" placeholder="Add New Task" required/>
+          <input type="date" name="due_date">
+          <select name="priority">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
           <button class="add" type="submit" name="list" value=<%=listTitle %> >+</button>
         </form>
   </div>
