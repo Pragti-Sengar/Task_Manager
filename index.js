@@ -5,14 +5,17 @@ import pg from "pg";
 const app = express();
 const port = 3000;
 
-const db = new pg.Client({
-  user: "postgres",
-  host: "localhost",
-  database: "world",
-  password: "Pragti@123",
-  port: 5432,
+const db = new Client({
+  connectionString: process.env.DB_URL, // Render will provide this value
+  ssl: {
+    rejectUnauthorized: false, // Required for Render
+  },
 });
-db.connect();
+
+// Connect to the database
+db.connect()
+  .then(() => console.log('✅ Connected to PostgreSQL successfully!'))
+  .catch(err => console.error('❌ Error connecting to PostgreSQL:', err.stack));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
